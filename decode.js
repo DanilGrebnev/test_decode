@@ -1,3 +1,5 @@
+document.addEventListener("DOMContentLoaded", main)
+
 function encode(input) {
     return (
         /**Строка: hello */
@@ -102,61 +104,81 @@ function encode(input) {
 }
 
 function decode(input) {
-    const string = input
-
-    return (
-        string
-            /**
-             * Найдём вхождение всех последовательностей,
-             * которые начинаются с "." c последующим числом
-             * или начинаются с "-" с последующим числом
-             */
-            .match(/[.-]\d+/g)
-            .reduce((acc, x) => {
+    try {
+        const string = input
+        return (
+            string
                 /**
-                 * Получаем длинну массива
+                 * Найдём вхождение всех последовательностей,
+                 * которые начинаются с "." c последующим числом
+                 * или начинаются с "-" с последующим числом
                  */
-                const n = [...x].slice(1).reduce((a, b) => a + b)
-                /**
-                 * Преобразуем каждый найденный элемент в массив
-                 */
-                const a =
-                    x[0] === "." ? new Array(+n).fill(1) : new Array(+n).fill(0)
-                if (a.length === 1) {
-                    acc.push(".")
-                } else {
+                .match(/[.-]\d+/g)
+                .reduce((acc, x) => {
                     /**
-                     * решаем линейное уровнение, чтобы найти значение элемента
+                     * Получаем длинну массива
                      */
-                    acc.push((a.length - 2) / 2)
-                }
+                    const n = [...x].slice(1).reduce((a, b) => a + b)
+                    /**
+                     * Преобразуем каждый найденный элемент в массив
+                     */
+                    const a =
+                        x[0] === "."
+                            ? new Array(+n).fill(1)
+                            : new Array(+n).fill(0)
+                    if (a.length === 1) {
+                        acc.push(".")
+                    } else {
+                        /**
+                         * решаем линейное уровнение, чтобы найти значение элемента
+                         */
+                        acc.push((a.length - 2) / 2)
+                    }
 
-                return acc
-            }, [])
-            .join("")
-            .match(/(\d+)\.(\d+)/g)
-            .reduce((acc, el) => {
-                const matches = el.match(/(\d+)\.(\d+)/)
-                acc.push([+matches[1], +matches[2]])
-                return acc
-            }, [])
-            .sort((a, b) => a[1] - b[1])
-            .reduce((acc, el) => {
-                acc += String.fromCodePoint(el[0])
-                return acc
-            }, "")
-    )
+                    return acc
+                }, [])
+                .join("")
+                .match(/(\d+)\.(\d+)/g)
+                .reduce((acc, el) => {
+                    const matches = el.match(/(\d+)\.(\d+)/)
+                    acc.push([+matches[1], +matches[2]])
+                    return acc
+                }, [])
+                .sort((a, b) => a[1] - b[1])
+                .reduce((acc, el) => {
+                    acc += String.fromCodePoint(el[0])
+                    return acc
+                }, "")
+        )
+    } catch (err) {
+        console.error("Упс, что-то пошло не так", err)
+    }
 }
 
-console.log(decode(encode("привет")))
-console.log(decode(encode("зашифрованная фраза")))
-console.log(
-    decode(encode("Какой-то оооочень, ну просто очень большой и сложный текст"))
-)
-console.log(
-    decode(
-        encode(
-            "Мой телеграмм: @Jops_Stiven, мой вк: https://vk.com/danil_sobolev1998, номер телефона: 8-937-697-59-01."
-        )
-    )
-)
+function main() {
+    const encodeInput = document.querySelector(".encodeString")
+    const encodeOutput = document.querySelector(".encodeOutput")
+
+    const decodeInput = document.querySelector(".decodeString")
+    const decodeOutput = document.querySelector(".decodeOutput")
+
+    function innerResult(e, outputNode, cb) {
+        const { value } = e.target
+
+        if (!value) {
+            outputNode.innerText = ""
+            return
+        }
+
+        const res = cb(value)
+        outputNode.innerText = res
+    }
+
+    encodeInput.oninput = (e) => {
+        innerResult(e, encodeOutput, encode)
+    }
+
+    decodeInput.oninput = (e) => {
+        innerResult(e, decodeOutput, decode)
+    }
+}

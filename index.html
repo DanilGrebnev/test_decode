@@ -3,13 +3,23 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="./style.css" />
+        <link rel="stylesheet" href="style.css" />
         <title>Document</title>
     </head>
     <body>
-        <div class="root"></div>
+        <div class="wrapper">
+            <textarea
+                class="encodeString"
+                placeholder="закодировать строку"
+            ></textarea>
+            <div class="encodeOutput"></div>
+            <textarea
+                class="decodeString"
+                placeholder="раскодировать строку"
+            ></textarea>
+            <div class="decodeOutput"></div>
+        </div>
 
-        <script defer src="encode.js"></script>
-        <script src="decode.js"></script>
+        <script defer src="decode.js"></script>
     </body>
 </html>
